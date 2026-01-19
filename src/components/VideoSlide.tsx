@@ -1,4 +1,4 @@
-import { Skeleton, Stack } from '@mui/material';
+import { Skeleton, Stack, useMediaQuery, useTheme } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import VideoControls from './VideoControls';
 
@@ -8,6 +8,8 @@ interface VideoSlideProps {
 }
 
 export default function VideoSlide({ videoSrc, isActive }: VideoSlideProps) {
+  const theme = useTheme();
+  const isTouchDevice = useMediaQuery(theme.breakpoints.down('md'));
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -70,6 +72,10 @@ export default function VideoSlide({ videoSrc, isActive }: VideoSlideProps) {
     }
   };
 
+  // On touch devices (mobile/tablet), always show controls for active video (no hover state)
+  // On desktop, show controls based on hover state
+  const shouldShowControls = isTouchDevice || isHovered;
+
   return (
     <Stack 
       justifyContent='center' 
@@ -84,8 +90,8 @@ export default function VideoSlide({ videoSrc, isActive }: VideoSlideProps) {
         // Visual indicator for active slide
         boxShadow: isActive ? (theme) => `0 0 0 4px ${theme.palette.skyBold.main}` : 'none',
       }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => !isTouchDevice && setIsHovered(true)}
+      onMouseLeave={() => !isTouchDevice && setIsHovered(false)}
     >
       {isLoading && (
         <Skeleton 
@@ -124,7 +130,7 @@ export default function VideoSlide({ videoSrc, isActive }: VideoSlideProps) {
         <VideoControls
           isPlaying={isPlaying}
           isMuted={isMuted}
-          isHovered={isHovered}
+          isHovered={shouldShowControls}
           onPlayPause={handlePlayPause}
           onMuteToggle={handleMuteToggle}
         />
