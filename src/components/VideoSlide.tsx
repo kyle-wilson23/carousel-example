@@ -1,26 +1,50 @@
 import { Stack } from '@mui/material';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import VideoControls from './VideoControls';
 
 interface VideoSlideProps {
   videoSrc: string;
+  isActive: boolean;
 }
 
-export default function VideoSlide({ videoSrc }: VideoSlideProps) {
+export default function VideoSlide({ videoSrc, isActive }: VideoSlideProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+
+    // Rely on event listeners to avoid calling setState in an effect below
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('pause', handlePause);
+
+    return () => {
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('pause', handlePause);
+    };
+  }, []);
+
+  // Pause video when slide becomes inactive
+  useEffect(() => {
+    if (!isActive && videoRef.current && !videoRef.current.paused) {
+      // Avoid setIsPlaying here to avoid calling setState in an effect
+      videoRef.current.pause();
+    }
+  }, [isActive]);
 
   const handlePlayPause = () => {
     const video = videoRef.current;
     if (video) {
       if (video.paused) {
         video.play();
-        setIsPlaying(true);
       } else {
         video.pause();
-        setIsPlaying(false);
       }
     }
   };
@@ -37,30 +61,42 @@ export default function VideoSlide({ videoSrc }: VideoSlideProps) {
     <Stack 
       justifyContent='center' 
       alignItems='center' 
-      width={300} 
-      height={500}
-      sx={{ position: 'relative' }}
+      width={316} 
+      height={514}
+      borderRadius={'20px'}
+      sx={{ 
+        position: 'relative',
+        // Visual indicator for active slide
+        boxShadow: isActive ? (theme) => `0 0 0 4px ${theme.palette.skyBold.main}` : 'none',
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <video
         ref={videoRef}
         preload="metadata"
+        muted
         style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover'
+          width: 300,
+          height: 500,
+          objectFit: 'cover',
+          // Disabled visual effect for non-active videos
+          opacity: isActive ? 1 : 0.5,
+          filter: isActive ? 'none' : 'grayscale(50%)',
+          transition: 'opacity 0.3s ease, filter 0.3s ease'
         }}
       >
         <source src={videoSrc} type="video/mp4" />
       </video>
-      <VideoControls
-        isPlaying={isPlaying}
-        isMuted={isMuted}
-        isHovered={isHovered}
-        onPlayPause={handlePlayPause}
-        onMuteToggle={handleMuteToggle}
-      />
+      {isActive && (
+        <VideoControls
+          isPlaying={isPlaying}
+          isMuted={isMuted}
+          isHovered={isHovered}
+          onPlayPause={handlePlayPause}
+          onMuteToggle={handleMuteToggle}
+        />
+      )}
     </Stack>
   );
 }

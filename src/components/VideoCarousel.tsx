@@ -1,9 +1,10 @@
-import { type RefObject } from 'react';
+import { type RefObject, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { type Swiper as SwiperType } from 'swiper';
 import { Navigation } from 'swiper/modules';
-import 'swiper/swiper-bundle.css';
 import VideoSlide from './VideoSlide';
+
+import 'swiper/swiper-bundle.css';
 
 interface VideoCarouselProps {
   videoPaths: string[];
@@ -12,6 +13,8 @@ interface VideoCarouselProps {
 }
 
 export default function VideoCarousel({ videoPaths, prevButtonRef, nextButtonRef }: VideoCarouselProps) {
+  const [activeIndex, setActiveIndex] = useState(0);
+
   // Map prev/next button refs to swiper navigation
   const onBeforeInit = (swiper: SwiperType) => {
     if (typeof swiper.params.navigation !== 'boolean') {
@@ -22,6 +25,10 @@ export default function VideoCarousel({ videoPaths, prevButtonRef, nextButtonRef
       }
     }
   }
+
+  const handleSlideChange = (swiper: SwiperType) => {
+    setActiveIndex(swiper.activeIndex);
+  }
   
   return (
     <Swiper
@@ -30,13 +37,16 @@ export default function VideoCarousel({ videoPaths, prevButtonRef, nextButtonRef
       navigation={true}
       onBeforeInit={ onBeforeInit }
       modules={[Navigation]}
-      // TODO: get rid of logs
-      onSlideChange={() => console.log('slide change')}
-      onSwiper={(swiper) => console.log(swiper)}
+      onSlideChange={handleSlideChange}
+      onSwiper={handleSlideChange}
+      style={{
+        padding: '8px',
+        overflow: 'visible'
+      }}
     >
       {videoPaths.map((videoSrc, index) => (
-        <SwiperSlide key={index}>
-          <VideoSlide videoSrc={videoSrc} />
+        <SwiperSlide key={index} style={{ overflow: 'visible' }}>
+          <VideoSlide videoSrc={videoSrc} isActive={index === activeIndex} />
         </SwiperSlide>
       ))}
     </Swiper>

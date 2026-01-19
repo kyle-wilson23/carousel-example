@@ -5,9 +5,15 @@ declare module '@mui/material/styles' {
     midnightBalanced: {
       main: string;
     };
+    skyBold: {
+      main: string;
+    };
   }
   interface PaletteOptions {
     midnightBalanced?: {
+      main?: string;
+    };
+    skyBold?: {
       main?: string;
     };
   }
@@ -26,6 +32,9 @@ export const theme = createTheme({
   palette: {
     midnightBalanced: {
       main: '#4F6076',
+    },
+    skyBold: {
+      main: '#69A2FF',
     },
     background: {
       default: '#ECEBE7'
