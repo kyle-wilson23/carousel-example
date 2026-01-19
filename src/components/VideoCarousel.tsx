@@ -16,7 +16,8 @@ export default function VideoCarousel({ videoPaths, prevButtonRef, nextButtonRef
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleSlideChange = (swiper: SwiperType) => {
-    setActiveIndex(swiper.activeIndex);
+    // Use realIndex instead of activeIndex to get the actual slide index in loop mode
+    setActiveIndex(swiper.realIndex);
   }
 
   const onInit = (swiper: SwiperType) => {
@@ -32,6 +33,7 @@ export default function VideoCarousel({ videoPaths, prevButtonRef, nextButtonRef
   return (
     <Swiper
       spaceBetween={20}
+      loop={true}
       // Overrides default navigation controls but avoids errors related to accessing refs during render
       // onInit is used to initialize the navigation controls with the custom buttons
       navigation={{
