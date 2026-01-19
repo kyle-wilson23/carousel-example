@@ -13,7 +13,7 @@ function App() {
   const buttonStyles = { width: 48, height: 48, borderRadius: '50%', backgroundColor: 'white' };
 
   return (
-    <Container maxWidth='lg' sx={{ padding: 0 }}>
+    <Container maxWidth='lg' sx={{ padding: { xs: '0 16px' } }}>
       <Stack spacing={2}>
         <Stack direction='row' justifyContent='space-between' alignItems='center' pt='40px' pb={2}>
           <Typography fontWeight={600} fontSize={28} lineHeight='36px' color='midnightBalanced.main'>A day in the life</Typography>

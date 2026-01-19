@@ -15,30 +15,41 @@ interface VideoCarouselProps {
 export default function VideoCarousel({ videoPaths, prevButtonRef, nextButtonRef }: VideoCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Map prev/next button refs to swiper navigation
-  const onBeforeInit = (swiper: SwiperType) => {
-    if (typeof swiper.params.navigation !== 'boolean') {
-      const navigation = swiper.params.navigation;
-      if (navigation && prevButtonRef && nextButtonRef) {
-        navigation.prevEl = prevButtonRef.current;
-        navigation.nextEl = nextButtonRef.current;
-      }
-    }
-  }
-
   const handleSlideChange = (swiper: SwiperType) => {
     setActiveIndex(swiper.activeIndex);
+  }
+
+  const onInit = (swiper: SwiperType) => {
+    // Ensure navigation is properly initialized with custom controls only
+    if (typeof swiper.params.navigation !== 'boolean' && swiper.params.navigation) {
+      swiper.params.navigation.prevEl = prevButtonRef.current;
+      swiper.params.navigation.nextEl = nextButtonRef.current;
+      swiper.navigation.init();
+      swiper.navigation.update();
+    }
   }
   
   return (
     <Swiper
       spaceBetween={20}
-      slidesPerView={4}
-      navigation={true}
-      onBeforeInit={ onBeforeInit }
+      // Overrides default navigation controls but avoids errors related to accessing refs during render
+      // onInit is used to initialize the navigation controls with the custom buttons
+      navigation={{
+        prevEl: null,
+        nextEl: null,
+      }}
       modules={[Navigation]}
+      onInit={onInit}
       onSlideChange={handleSlideChange}
       onSwiper={handleSlideChange}
+      breakpoints={{
+        // Mobile: 2 slide
+        640: { slidesPerView: 2 },
+        // Tablet: 2 slides
+        768: { slidesPerView: 3 },
+        // Desktop: 4 slides
+        1024: { slidesPerView: 4 }
+      }}
       style={{
         padding: '8px',
         overflow: 'visible'

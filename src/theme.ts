@@ -40,4 +40,16 @@ export const theme = createTheme({
       default: '#ECEBE7'
     },
   },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        html: {
+          overflowX: 'hidden',
+        },
+        body: {
+          overflowX: 'hidden',
+        },
+      },
+    },
+  },
 });

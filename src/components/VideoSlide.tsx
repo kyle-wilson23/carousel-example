@@ -24,6 +24,9 @@ export default function VideoSlide({ videoSrc, isActive }: VideoSlideProps) {
     video.addEventListener('play', handlePlay);
     video.addEventListener('pause', handlePause);
 
+    // Force Safari to load video metadata and show thumbnail... Safari has strict rules about preload attribute
+    video.load();
+
     return () => {
       video.removeEventListener('play', handlePlay);
       video.removeEventListener('pause', handlePause);
@@ -61,11 +64,13 @@ export default function VideoSlide({ videoSrc, isActive }: VideoSlideProps) {
     <Stack 
       justifyContent='center' 
       alignItems='center' 
-      width={316} 
-      height={514}
+      width='100%'
+      maxWidth={316}
+      height='auto'
       borderRadius={'20px'}
       sx={{ 
         position: 'relative',
+        aspectRatio: '316/514',
         // Visual indicator for active slide
         boxShadow: isActive ? (theme) => `0 0 0 4px ${theme.palette.skyBold.main}` : 'none',
       }}
@@ -76,9 +81,12 @@ export default function VideoSlide({ videoSrc, isActive }: VideoSlideProps) {
         ref={videoRef}
         preload="metadata"
         muted
+        playsInline
         style={{
-          width: 300,
-          height: 500,
+          width: 'calc(100% - 16px)',
+          height: 'calc(100% - 14px)',
+          maxWidth: 300,
+          maxHeight: 500,
           objectFit: 'cover',
           // Disabled visual effect for non-active videos
           opacity: isActive ? 1 : 0.5,
