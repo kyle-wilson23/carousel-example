@@ -1,15 +1,36 @@
-import { Container, Stack, Typography } from '@mui/material'
+import { useRef } from 'react'
+import { Container, IconButton, Stack, Typography } from '@mui/material'
+import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 import VideoCarousel from './components/VideoCarousel'
 
 // Generate an array of video paths from the assets folder
 const videoPaths = [...Array(15)].map((_, i) => `/assets/videos/${i + 1}.mp4`);
 
 function App() {
+  const prevRef = useRef<HTMLButtonElement>(null);
+  const nextRef = useRef<HTMLButtonElement>(null);
+
+  const buttonStyles = { width: 48, height: 48, borderRadius: '50%', backgroundColor: 'white' };
+
   return (
-    <Container maxWidth="lg" sx={{ padding: 0 }}>
+    <Container maxWidth='lg' sx={{ padding: 0 }}>
       <Stack spacing={2}>
-        <Typography variant="h4" color="midnightBalanced.main">A day in the life</Typography>
-        <VideoCarousel videoPaths={videoPaths} />
+        <Stack direction='row' justifyContent='space-between'>
+          <Typography variant='h4' color='midnightBalanced.main'>A day in the life</Typography>
+          <Stack direction='row'>
+            <IconButton ref={prevRef} sx={buttonStyles}>
+              <ChevronLeft />
+            </IconButton>
+            <IconButton ref={nextRef} sx={{ ...buttonStyles, marginLeft: '20px' }}>
+              <ChevronRight />
+            </IconButton>
+          </Stack>
+        </Stack>
+        <VideoCarousel 
+          videoPaths={videoPaths}
+          prevButtonRef={prevRef}
+          nextButtonRef={nextRef}
+        />
       </Stack>
     </Container>
   )
