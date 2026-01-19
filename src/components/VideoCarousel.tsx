@@ -12,6 +12,7 @@ interface VideoCarouselProps {
 }
 
 export default function VideoCarousel({ videoPaths, prevButtonRef, nextButtonRef }: VideoCarouselProps) {
+  // Map prev/next button refs to swiper navigation
   const onBeforeInit = (swiper: SwiperType) => {
     if (typeof swiper.params.navigation !== 'boolean') {
       const navigation = swiper.params.navigation;

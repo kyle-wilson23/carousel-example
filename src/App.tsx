@@ -15,8 +15,8 @@ function App() {
   return (
     <Container maxWidth='lg' sx={{ padding: 0 }}>
       <Stack spacing={2}>
-        <Stack direction='row' justifyContent='space-between'>
-          <Typography variant='h4' color='midnightBalanced.main'>A day in the life</Typography>
+        <Stack direction='row' justifyContent='space-between' alignItems='center' pt='40px' pb={2}>
+          <Typography fontWeight={600} fontSize={28} lineHeight='36px' color='midnightBalanced.main'>A day in the life</Typography>
           <Stack direction='row'>
             <IconButton ref={prevRef} sx={buttonStyles}>
               <ChevronLeft />
